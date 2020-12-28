@@ -9,19 +9,23 @@ import net.minestom.server.utils.Direction;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 public abstract class GameItem extends ItemStack {
 
     public GameItem() {
         super(Material.AIR, (byte) 1);
         setMaterial(getMaterial());
-        setDisplayName(ColoredText.of(getName()));
+        setLore(generateLore());
+        setDisplayName(generateDisplayName());
         setStackingRule(getMaxSize());
     }
 
     public GameItem(Document document) {
         super(Material.AIR, (byte) document.getInteger("amount", 1));
         setMaterial(getMaterial());
-        setDisplayName(ColoredText.of(getName()));
+        setDisplayName(generateDisplayName());
+        setLore(generateLore());
         setStackingRule(getMaxSize());
     }
 
@@ -31,6 +35,10 @@ public abstract class GameItem extends ItemStack {
 
     public abstract Material getMaterial();
 
+    public abstract Rarity getRarity();
+
+    public abstract ItemType getType();
+
     public abstract KolicalStackingRule getMaxSize();
 
     public Document toDocument() {
@@ -38,6 +46,19 @@ public abstract class GameItem extends ItemStack {
         document.append("id", getID());
         document.append("amount", getAmount());
         return document;
+    }
+
+    public ColoredText generateDisplayName() {
+        return ColoredText.of(getRarity().getColor(), getName());
+    }
+
+    public ArrayList<ColoredText> generateLore() {
+        ArrayList<ColoredText> lore = new ArrayList<>();
+        lore.add(ColoredText.of(""));
+
+        // Rarity Footer
+        lore.add(ColoredText.of(getRarity().getColor(), getRarity().getName() + " " + getType().getName()));
+        return lore;
     }
 
     @Override

@@ -5,7 +5,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.nesaak.kolical.events.EventHandler;
 import com.nesaak.kolical.item.KolicalStackingRule;
-import com.nesaak.kolical.item.weapon.Stick;
+import com.nesaak.kolical.item.registry.ItemRegistry;
+import com.nesaak.kolical.mongo.Database;
 import com.nesaak.kolical.player.GamePlayer;
 import com.nesaak.kolical.tasks.ResourceUsage;
 import net.minestom.server.MinecraftServer;
@@ -33,8 +34,12 @@ public class KolicalServer implements ResponseDataConsumer {
     static KolicalServer server;
 
     private MongoClient databaseClient;
-    private MongoDatabase database;
+    private MongoDatabase mongo;
+    private Database database;
+
+
     private Reflections reflections = new Reflections("com.nesaak.kolical");
+    private ItemRegistry itemRegistry = new ItemRegistry();
 
     public static void main(String[] args) {
         new KolicalServer();
@@ -55,6 +60,8 @@ public class KolicalServer implements ResponseDataConsumer {
         registerEvents();
         registerCommands();
 
+        itemRegistry.registerItems();
+
         ItemStack.setDefaultStackingRule(KolicalStackingRule.LARGE);
 
         MinecraftServer.getBenchmarkManager().enable(new UpdateOption(10 * 1000, TimeUnit.MILLISECOND));
@@ -64,11 +71,6 @@ public class KolicalServer implements ResponseDataConsumer {
         MinecraftServer.getGlobalEventHandler().addEventCallback(PlayerBlockInteractEvent.class, click -> {
             click.getPlayer().sendMessage(click.getPlayer().getItemInMainHand().getClass().getName());
         });
-
-        Stick stick = new Stick();
-        stick.setHits(50);
-        System.out.println("Original Class: " + stick.getHits());
-        System.out.println("Cloned Class: " + ((Stick) stick.clone()).getHits());
 
     }
 
@@ -100,7 +102,8 @@ public class KolicalServer implements ResponseDataConsumer {
 
     private void setupDatabase() {
         databaseClient = MongoClients.create(readResource("Mongo.txt").get(0));
-        database = databaseClient.getDatabase("development");
+        mongo = databaseClient.getDatabase("development");
+        database = new Database(mongo);
     }
 
     public List<String> readResource(String name) {
@@ -108,8 +111,16 @@ public class KolicalServer implements ResponseDataConsumer {
         return reader.lines().collect(Collectors.toList());
     }
 
-    public MongoDatabase getDatabase() {
+    public Database getDatabase() {
         return database;
+    }
+
+    public ItemRegistry getItemRegistry() {
+        return itemRegistry;
+    }
+
+    public Reflections getReflections() {
+        return reflections;
     }
 
     @Override

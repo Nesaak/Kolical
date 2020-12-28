@@ -1,7 +1,9 @@
 package com.nesaak.kolical.item.weapon;
 
 import com.nesaak.kolical.item.GameItem;
+import com.nesaak.kolical.item.ItemType;
 import com.nesaak.kolical.item.KolicalStackingRule;
+import com.nesaak.kolical.item.Rarity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.Material;
 import org.bson.Document;
@@ -13,7 +15,6 @@ public class Stick extends GameItem {
 
     public Stick() {
         super();
-        setAmount((byte) 32);
     }
 
     public Stick(Document document) {
@@ -45,8 +46,23 @@ public class Stick extends GameItem {
     }
 
     @Override
+    public Rarity getRarity() {
+        return Rarity.BASIC;
+    }
+
+    @Override
+    public ItemType getType() {
+        return ItemType.ITEM;
+    }
+
+    @Override
     public KolicalStackingRule getMaxSize() {
-        return KolicalStackingRule.HUGE;
+        return KolicalStackingRule.SINGLE;
+    }
+
+    @Override
+    public void onRightClick(@NotNull Player player, Player.@NotNull Hand hand) {
+        super.onRightClick(player, hand);
     }
 
     @Override

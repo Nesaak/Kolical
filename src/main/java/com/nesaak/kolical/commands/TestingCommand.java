@@ -1,6 +1,6 @@
 package com.nesaak.kolical.commands;
 
-import com.nesaak.kolical.item.weapon.Stick;
+import com.nesaak.kolical.Kolical;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Arguments;
 import net.minestom.server.command.builder.Command;
@@ -14,7 +14,7 @@ public class TestingCommand extends Command {
     }
 
     private void usage(CommandSender sender, Arguments arguments) {
-        sender.asPlayer().getInventory().addItemStack(new Stick());
+        sender.asPlayer().getInventory().addItemStack(Kolical.getItemRegistry().newInstance("stick"));
         sender.asPlayer().getInventory().update();
     }
 
