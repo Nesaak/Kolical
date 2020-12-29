@@ -4,14 +4,18 @@ import com.nesaak.kolical.item.GameItem;
 import com.nesaak.kolical.item.ItemType;
 import com.nesaak.kolical.item.KolicalStackingRule;
 import com.nesaak.kolical.item.Rarity;
+import com.nesaak.kolical.util.Cooldown;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.Material;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.TimeUnit;
+
 public class Stick extends GameItem {
 
     private int hits = 0;
+    private Cooldown cooldown = new Cooldown(TimeUnit.MILLISECONDS,500);
 
     public Stick() {
         super();
@@ -62,7 +66,12 @@ public class Stick extends GameItem {
 
     @Override
     public void onRightClick(@NotNull Player player, Player.@NotNull Hand hand) {
-        super.onRightClick(player, hand);
+        if (cooldown.useIfReady()) {
+            player.setVelocity(player.getPosition().getDirection().normalize().multiply(50).add(0f, 5f, 0));
+            player.sendMessage("used ability");
+        } else {
+            player.sendMessage("cannot use this for " + cooldown.getTimeRemaining() + "ms");
+        }
     }
 
     @Override
