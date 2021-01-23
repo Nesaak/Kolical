@@ -1,6 +1,10 @@
 package com.nesaak.kolical.item;
 
+import com.nesaak.kolical.item.stat.AttributeHolder;
+import com.nesaak.kolical.item.stat.ItemModifier;
+import com.nesaak.kolical.item.stat.ItemStat;
 import net.minestom.server.chat.ColoredText;
+import net.minestom.server.chat.JsonMessage;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -10,8 +14,12 @@ import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
-public abstract class GameItem extends ItemStack {
+public abstract class GameItem extends ItemStack implements AttributeHolder {
 
     public GameItem() {
         super(Material.AIR, (byte) 1);
@@ -41,6 +49,16 @@ public abstract class GameItem extends ItemStack {
 
     public abstract KolicalStackingRule getMaxSize();
 
+    @Override
+    public List<ItemModifier> getModifiers() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public Map<ItemStat, Double> getStats() {
+        return Collections.EMPTY_MAP;
+    }
+
     public Document toDocument() {
         Document document = new Document();
         document.append("id", getID());
@@ -52,11 +70,26 @@ public abstract class GameItem extends ItemStack {
         return ColoredText.of(getRarity().getColor(), getName());
     }
 
-    public ArrayList<ColoredText> generateLore() {
-        ArrayList<ColoredText> lore = new ArrayList<>();
+    public ArrayList<JsonMessage> generateLore() {
+        ArrayList<JsonMessage> lore = new ArrayList<>();
         lore.add(ColoredText.of(""));
 
-        // Rarity Footer
+        // Stats
+        if (getStats().size() > 0) {
+            getStats().entrySet().stream().sorted(Comparator.comparingInt(o -> o.getKey().ordinal())).forEach(entry -> {
+                lore.add(entry.getKey().getDisplay(entry.getValue()));
+            });
+            lore.add(ColoredText.of(""));
+        }
+
+        // Modifiers
+        if (getModifiers().size() > 0) {
+            for (ItemModifier modifier : getModifiers()) {
+                lore.add(modifier.getDisplay());
+            }
+            lore.add(ColoredText.of(""));
+        }
+
         lore.add(ColoredText.of(getRarity().getColor(), getRarity().getName() + " " + getType().getName()));
         return lore;
     }

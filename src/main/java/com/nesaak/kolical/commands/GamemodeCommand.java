@@ -6,8 +6,10 @@ import net.minestom.server.command.builder.Arguments;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.server.command.builder.exception.ArgumentSyntaxException;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -26,6 +28,10 @@ public class GamemodeCommand extends Command {
         addSyntax(this::executeOnSelf, mode);
     }
 
+    private void gameModeCallback(@NotNull CommandSender sender, @NotNull ArgumentSyntaxException e) {
+        sender.sendMessage(ChatColor.RED + "'" + e.getInput() + "' is not a valid gamemode!");
+    }
+
     private void executeOnSelf(CommandSender sender, Arguments arguments) {
         Player player = (Player) sender;
 
@@ -33,10 +39,6 @@ public class GamemodeCommand extends Command {
         GameMode mode = GameMode.valueOf(gamemodeName.toUpperCase());
         player.setGameMode(mode);
         player.sendMessage("You are now playing in " + gamemodeName);
-    }
-
-    private void gameModeCallback(CommandSender sender, String gamemode, int i) {
-        sender.sendMessage(ChatColor.RED + "'" + gamemode + "' is not a valid gamemode!");
     }
 
     private void usage(CommandSender sender, Arguments arguments) {

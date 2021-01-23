@@ -11,7 +11,6 @@ import com.nesaak.kolical.player.GamePlayer;
 import com.nesaak.kolical.tasks.ResourceUsage;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.Command;
-import net.minestom.server.event.player.PlayerBlockInteractEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.player.PlayerConnection;
@@ -60,18 +59,14 @@ public class KolicalServer implements ResponseDataConsumer {
         registerEvents();
         registerCommands();
 
-        itemRegistry.registerItems();
+        itemRegistry..registerItems();
 
         ItemStack.setDefaultStackingRule(KolicalStackingRule.LARGE);
+
 
         MinecraftServer.getBenchmarkManager().enable(new UpdateOption(10 * 1000, TimeUnit.MILLISECOND));
         MinecraftServer.getSchedulerManager().buildTask(new ResourceUsage()).repeat(10, TimeUnit.TICK).schedule();
         MinecraftServer.getConnectionManager().setPlayerProvider(GamePlayer::new);
-
-        MinecraftServer.getGlobalEventHandler().addEventCallback(PlayerBlockInteractEvent.class, click -> {
-            click.getPlayer().sendMessage(click.getPlayer().getItemInMainHand().getClass().getName());
-        });
-
     }
 
     private void registerEvents() {

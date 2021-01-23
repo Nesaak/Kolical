@@ -18,13 +18,13 @@
         <dependency>
             <groupId>com.github.minestom</groupId>
             <artifactId>minestom</artifactId>
-            <version>ca3667732f</version>
+            <version>d83abce</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.nesaak</groupId>
+            <groupId>com.github.Nesaak</groupId>
             <artifactId>NoReflection</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>b9fd2940dc</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>

@@ -5,8 +5,12 @@ import com.nesaak.kolical.item.ItemType;
 import com.nesaak.kolical.item.KolicalStackingRule;
 import com.nesaak.kolical.item.Rarity;
 import com.nesaak.kolical.util.Cooldown;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.ObjectEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.Material;
+import net.minestom.server.utils.Position;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +27,9 @@ public class Stick extends GameItem {
 
     public Stick(Document document) {
         super(document);
+        test: {
+
+        }
         hits = document.getInteger(hits);
     }
 
@@ -78,6 +85,34 @@ public class Stick extends GameItem {
     public void onLeftClick(@NotNull Player player, Player.@NotNull Hand hand) {
         super.onLeftClick(player, hand);
         hits++;
-        player.sendMessage(hits + "");
+        Position spawn = player.getPosition().clone().add(0f, 1.5f, 0).add(player.getPosition().getDirection().normalize().multiply(2).toPosition());
+        {
+            Entity arrow = new ObjectEntity(EntityType.ARROW, spawn) {
+
+                @Override
+                public void update(long time) {
+                }
+
+                @Override
+                public void spawn() {
+                }
+
+                @Override
+                public int getObjectData() {
+                    return 2;
+                }
+
+                @Override
+                public void tick(long time) {
+                    super.tick(time);
+                    //sendPacketsToViewers(ParticleCreator.createParticlePacket(Particle.CLOUD, this.lastX, this.lastY, this.lastZ, 0f, 0f, 0f, 3));
+                }
+
+            };
+            arrow.setGravity(0.01f, 0.04f, 5f);
+            arrow.setNoGravity(true);
+            arrow.setInstance(player.getInstance());
+            arrow.setVelocity(player.getPosition().getDirection().normalize().add(0f, 0.2f, 0).multiply(20));
+        }
     }
 }
