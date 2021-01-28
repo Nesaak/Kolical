@@ -6,6 +6,7 @@ import com.nesaak.kolical.item.stat.ItemStat;
 import net.minestom.server.chat.ColoredText;
 import net.minestom.server.chat.JsonMessage;
 import net.minestom.server.entity.Player;
+import net.minestom.server.item.ItemFlag;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.utils.BlockPosition;
@@ -23,18 +24,18 @@ public abstract class GameItem extends ItemStack implements AttributeHolder {
 
     public GameItem() {
         super(Material.AIR, (byte) 1);
-        setMaterial(getMaterial());
-        setLore(generateLore());
-        setDisplayName(generateDisplayName());
-        setStackingRule(getMaxSize());
     }
 
     public GameItem(Document document) {
         super(Material.AIR, (byte) document.getInteger("amount", 1));
+    }
+
+    private void init() {
         setMaterial(getMaterial());
         setDisplayName(generateDisplayName());
         setLore(generateLore());
         setStackingRule(getMaxSize());
+        addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
     }
 
     public abstract String getName();

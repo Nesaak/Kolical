@@ -51,7 +51,7 @@ public class WoodenPickaxe extends GameItem {
 
     @Override
     public Map<ItemStat, Double> getStats() {
-        return Map.of(ItemStat.DAMAGE, 50.0);
+        return Map.of(ItemStat.MINING_SPEED, 2.0);
     }
 
     @Override

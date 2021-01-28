@@ -3,6 +3,7 @@ package com.nesaak.kolical;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.nesaak.kolical.block.GameBlock;
 import com.nesaak.kolical.events.EventHandler;
 import com.nesaak.kolical.item.KolicalStackingRule;
 import com.nesaak.kolical.item.registry.ItemRegistry;
@@ -56,10 +57,11 @@ public class KolicalServer implements ResponseDataConsumer {
         MojangAuth.init();
         MinecraftServer.init();
 
-        registerEvents();
-        registerCommands();
+        itemRegistry.registerItems();
 
-        itemRegistry..registerItems();
+        registerEvents();
+        registerBlocks();
+        registerCommands();
 
         ItemStack.setDefaultStackingRule(KolicalStackingRule.LARGE);
 
@@ -85,6 +87,17 @@ public class KolicalServer implements ResponseDataConsumer {
             try {
                 Command command = commandclz.newInstance();
                 MinecraftServer.getCommandManager().register(command);
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void registerBlocks() {
+        reflections.getSubTypesOf(GameBlock.class).forEach(gameblock -> {
+            try {
+                GameBlock block = gameblock.newInstance();
+                MinecraftServer.getBlockManager().registerCustomBlock(block);
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }

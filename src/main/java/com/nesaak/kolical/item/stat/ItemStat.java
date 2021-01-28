@@ -7,6 +7,9 @@ import net.minestom.server.chat.RichMessage;
 
 public enum ItemStat {
 
+    HEALTH("Health", 10),
+    DEFENSE("Defense", 0),
+    MINING_SPEED("Mining Speed", 1),
     DAMAGE("Damage", 1);
 
     private String name;
@@ -30,4 +33,12 @@ public enum ItemStat {
     public double getBaseValue() {
         return baseValue;
     }
+
+    public static ItemStat fromID(String id) {
+        for (ItemStat value : values()) {
+            if (id.equalsIgnoreCase(value.name())) return value;
+        }
+        return null;
+    }
+
 }
